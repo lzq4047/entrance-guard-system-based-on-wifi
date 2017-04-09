@@ -33,7 +33,6 @@ const MainScreenStackNavigator = StackNavigator({
       return {
         style: {
           backgroundColor: '#47b2fb',
-          paddingHorizontal: 10,
         },
         titleStyle: {
           color: '#fff',
