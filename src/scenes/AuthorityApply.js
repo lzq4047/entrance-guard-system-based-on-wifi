@@ -8,6 +8,7 @@ import {
   Picker,
   TextInput,
   StyleSheet,
+  NativeModules
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -24,7 +25,7 @@ export default class Start extends Component {
       bulider: 'b1',
       floor: 'f1',
       house: '',
-      mac: '00-00-00-00',
+      serialNumber: '',
       applyDuration: '',
     };
   }
@@ -145,12 +146,19 @@ export default class Start extends Component {
           <FormItem
             editable={false}
             label="唯一标识符"
-            value={this.state.mac}
+            placeholder="点击获取唯一标识符"
+            value={this.state.serialNumber}
             onChangeText={mac => this.setState({mac})}
             buttonProps={{
               title: '获取',
               onPress: () => {
-                Alert.alert('获取Mac');
+                NativeModules.DeviceInfo.getSerialNumber()
+                  .then((serialNumber) => {
+                    this.setState({serialNumber});
+                  })
+                  .catch((err) => {
+                    console.error('请使用Android2.3以上的设备');
+                  });
               }
             }}
           />
