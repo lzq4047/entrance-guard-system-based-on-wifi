@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
   View,
   Alert,
@@ -8,26 +8,28 @@ import {
   Picker,
   TextInput,
   StyleSheet,
-  NativeModules
-} from 'react-native';
+  NativeModules,
+  AsyncStorage,
+} from 'react-native'
 
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import FormItem from '../components/FormItem.js';
-
+import Icon from 'react-native-vector-icons/MaterialIcons'
+import FormItem from '../components/FormItem.js'
+const INSTRUCTION_APPLY = 2
+const fields = ['userType', 'userName', 'ownerName', 'IDNumber', 'builder', 'floor', 'house', 'serialNumber', 'applyDuration']
 export default class Start extends Component {
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super(props)
     this.state = {
       userType: 'owner',
-      username: '',
-      ownername: '',
-      ID: '',
-      bulider: 'b1',
+      userName: '',
+      ownerName: '',
+      IDNumber: '',
+      builder: 'b1',
       floor: 'f1',
       house: '',
       serialNumber: '',
-      applyDuration: '',
-    };
+      applyDuration: '7',
+    }
   }
 
   static navigationOptions = {
@@ -39,35 +41,41 @@ export default class Start extends Component {
           <Icon name="fingerprint" size={25} color={tintColor} />
         )
       },
-    }
+    },
   }
-  render() {
+
+  render () {
+    console.log(this.state);
     const userTypeData = [
       {
         key: 'userType',
         pickerProps: {
           selectedValue: this.state.userType,
-          onValueChange: (userType) => {
+          onValueChange: userType => {
             this.setState({userType});
-          }
+            AsyncStorage.setItem('userType', userType, err => {
+              console.log('Saved failed.');
+            })
+          },
         },
-        pickerItemProps: {
-
-        },
+        pickerItemProps: {},
         options: [
           {label: '我是业主', value: 'owner', key: 'owner'},
           {label: '我是访客', value: 'visitor', key: 'visitor'},
-        ]
-      }
-    ];
+        ],
+      },
+    ]
     const builderInfoData = [
       {
         key: 'builder',
         pickerProps: {
           selectedValue: this.state.builder,
-          onValueChange: (builder) => {
+          onValueChange: builder => {
             this.setState({builder});
-          }
+            AsyncStorage.setItem('builder', builder, err => {
+              console.log('Saved failed.');
+            })
+          },
         },
         options: [
           {label: '1栋', value: 'b1', key: 'builder1'},
@@ -79,9 +87,12 @@ export default class Start extends Component {
         key: 'floor',
         pickerProps: {
           selectedValue: this.state.floor,
-          onValueChange: (floor) => {
+          onValueChange: floor => {
             this.setState({floor});
-          }
+            AsyncStorage.setItem('floor', floor, err => {
+              console.log('Saved failed.');
+            })
+          },
         },
         options: [
           {label: '1层', value: 'f1', key: 'floor1'},
@@ -89,7 +100,8 @@ export default class Start extends Component {
           {label: '3层', value: 'f3', key: 'floor3'},
         ],
       },
-    ];
+    ]
+
     return (
       <ScrollView style={styles.container}>
         <View>
@@ -102,16 +114,26 @@ export default class Start extends Component {
           <FormItem
             label="姓名"
             placeholder="请输入您的姓名"
-            value={this.state.username}
-            onChangeText={username => this.setState({username})}
+            value={this.state.userName}
+            onChangeText={userName => {
+              this.setState({userName});
+              AsyncStorage.setItem('userName', userName, err => {
+                console.log('Saved failed');
+              });
+            }}
           />
           <FormItem
             label="身份证号码"
             placeholder="请输入您的身份证号码"
             keyboardType="numeric"
-            maxLength ={18}
-            value={this.state.ID}
-            onChangeText={ID => this.setState({ID})}
+            maxLength={18}
+            value={this.state.IDNumber}
+            onChangeText={IDNumber => {
+              this.setState({IDNumber});
+              AsyncStorage.setItem('IDNumber', IDNumber, err => {
+                console.log('Saved failed');
+              });
+            }}
           />
           {
             this.state.userType === 'visitor'
@@ -119,8 +141,13 @@ export default class Start extends Component {
             <FormItem
               label="业主姓名"
               placeholder="请输入业主姓名"
-              value={this.state.ownername}
-              onChangeText={ownername => this.setState({ownername})}
+              value={this.state.ownerName}
+              onChangeText={ownerName => {
+                this.setState({ownerName});
+                AsyncStorage.setItem('ownerName', ownerName, err => {
+                  console.log('Saved failed');
+                });
+              }}
             />
           }
           <FormItem
@@ -131,7 +158,12 @@ export default class Start extends Component {
             label="房间号"
             placeholder="请输入您的房间号"
             value={this.state.house}
-            onChangeText={house => this.setState({house})}
+            onChangeText={house => {
+              this.setState({house});
+              AsyncStorage.setItem('house', house, err => {
+                console.log('Saved failed');
+              });
+            }}
           />
           {
             this.state.userType === 'visitor'
@@ -139,8 +171,14 @@ export default class Start extends Component {
             <FormItem
               label="申请时长"
               placeholder="请输入申请时长（天）"
+              keyboardType="numeric"
               value={this.state.applyDuration}
-              onChangeText={applyDuration => this.setState({applyDuration})}
+              onChangeText={applyDuration => {
+                this.setState({applyDuration});
+                AsyncStorage.setItem('applyDuration', applyDuration, err => {
+                  console.log('Saved failed');
+                })
+              }}
             />
           }
           <FormItem
@@ -148,24 +186,32 @@ export default class Start extends Component {
             label="唯一标识符"
             placeholder="点击获取唯一标识符"
             value={this.state.serialNumber}
-            onChangeText={mac => this.setState({mac})}
+            onChangeText={serialNumber => {
+              this.setState({serialNumber});
+              AsyncStorage.setItem('serialNumber', serialNumber, err => {
+                console.log('Saved failed');
+              })
+            }}
             buttonProps={{
               title: '获取',
               onPress: () => {
                 NativeModules.DeviceInfo.getSerialNumber()
-                  .then((serialNumber) => {
-                    this.setState({serialNumber});
-                  })
-                  .catch((err) => {
-                    console.error('请使用Android2.3以上的设备');
-                  });
-              }
+                .then((serialNumber) => {
+                  this.setState({serialNumber});
+                  // AsyncStorage.setItem('serialNumber', serialNumber, err => {
+                  //   console.log('Saved failed');
+                  // })
+                })
+                .catch((err) => {
+                  console.error('请使用Android2.3以上的设备')
+                })
+              },
             }}
           />
         </View>
         <View style={styles.tips}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Icon name="warning" size={25} color="#fb6362"></Icon>
+            <Icon name="warning" size={25} color="#fb6362">&nbsp;</Icon>
             <Text style={{marginLeft: 5, fontSize: 16, color: '#fb6362'}}>注意</Text>
           </View>
           <View style={styles.tipsContent}>
@@ -179,7 +225,9 @@ export default class Start extends Component {
             <Button
               title="申请授权"
               onPress={() => {
-                console.log(this.state);
+                let applyStatus = true;
+                console.log(INSTRUCTION_APPLY + JSON.stringify(this.state));
+                NativeModules.UDPSocket.send(INSTRUCTION_APPLY + JSON.stringify(this.state));
               }}
             />
           </View>
@@ -188,7 +236,7 @@ export default class Start extends Component {
               color="#b3b3b3"
               title="重置"
               onPress={() => {
-                console.log('reset');
+                console.log('reset')
               }}
             />
           </View>
@@ -196,7 +244,19 @@ export default class Start extends Component {
       </ScrollView>
     )
   }
-};
+
+  componentDidMount () {
+    fields.forEach(field => {
+      AsyncStorage.getItem(field, (err, res) => {
+        if (res) {
+          console.log(field + ':' + res);
+          this.setState({[field]: res});
+          // this.forceUpdate();
+        }
+      })
+    });
+  }
+}
 
 const styles = StyleSheet.create({
   container: {

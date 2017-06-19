@@ -21,7 +21,7 @@ export default class FormItem extends Component {
     if (this.props.data instanceof Array) {
       const {label, data} = this.props;
       return (
-        <View style={formItemStyle.constainer}>
+        <View style={formItemStyle.container}>
           <Text style={formItemStyle.label}>{label}：</Text>
           <View style={[formItemStyle.fields, {flexDirection: 'row'}]}>
             {
@@ -52,7 +52,7 @@ export default class FormItem extends Component {
     } else {
       const {label, buttonProps, ...props} = this.props;
       return (
-        <View style={formItemStyle.constainer}>
+        <View style={formItemStyle.container}>
           <Text style={formItemStyle.label}>{label}：</Text>
           <View style={formItemStyle.fields}>
             <View style={formItemStyle.inputItem}>
@@ -73,7 +73,7 @@ export default class FormItem extends Component {
   }
 };
 const formItemStyle = StyleSheet.create({
-  constainer: {
+  container: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',

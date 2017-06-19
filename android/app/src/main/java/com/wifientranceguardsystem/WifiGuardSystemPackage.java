@@ -19,6 +19,7 @@ public class WifiGuardSystemPackage implements ReactPackage {
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
         modules.add(new DeviceInfo(reactContext));
+        modules.add(new UDPSocket(reactContext));
         return modules;
     }
 

@@ -8,6 +8,7 @@ import {
   Switch,
   Geolocation,
   StyleSheet,
+  AsyncStorage
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -21,9 +22,10 @@ export default class Start extends Component {
     this.state = {
       autoRun: false,
       autoConnect: false,
-      autoClose: 5,
+      autoClose: '5',
       ssid: '',
       wifiPwd: '',
+      position: ''
     };
   }
   static navigationOptions = {
@@ -43,12 +45,17 @@ export default class Start extends Component {
         key: 'autoClose',
         pickerProps: {
           selectedValue: this.state.autoClose,
-          onValueChange: autoClose => this.setState({autoClose})
+          onValueChange: autoClose => {
+            this.setState({autoClose});
+            AsyncStorage.setItem('autoClose', autoClose, err => {
+              console.log('Saved failed.');
+            });
+          }
         },
         options: [
-          {label: '5s', value: 5, key: 'autoclose5s'},
-          {label: '10s', value: 10, key: 'autoclose10s'},
-          {label: '15s', value: 15, key: 'autoclose15s'},
+          {label: '5s', value: '5', key: 'autoclose5s'},
+          {label: '10s', value: '10', key: 'autoclose10s'},
+          {label: '15s', value: '15', key: 'autoclose15s'},
         ]
       }
     ];
@@ -61,7 +68,12 @@ export default class Start extends Component {
               onTintColor="#00cf9b"
               tintColor="#cccccc"
               value={this.state.autoRun}
-              onValueChange={autoRun => this.setState({autoRun})}
+              onValueChange={autoRun => {
+                this.setState({autoRun});
+                AsyncStorage.setItem('autoRun', autoRun ? 'yes' : 'no', err => {
+                  console.log('Saved failed.');
+                });
+              }}
             />
           </View>
         </ConfigBlock>
@@ -72,7 +84,12 @@ export default class Start extends Component {
               onTintColor="#00cf9b"
               tintColor="#cccccc"
               value={this.state.autoConnect}
-              onValueChange={autoConnect => this.setState({autoConnect})}
+              onValueChange={autoConnect => {
+                this.setState({autoConnect});
+                AsyncStorage.setItem('autoConnect', autoConnect ? 'yes' : 'no', err => {
+                  console.log('Saved failed.');
+                });
+              }}
             />
           </View>
           <View>
@@ -80,7 +97,12 @@ export default class Start extends Component {
               label="门禁系统位置"
               placeholder="请手动输入或获取门禁系统位置信息"
               value={this.state.position}
-              onValueChange={position => this.setState({position})}
+              onChangeText={position => {
+                this.setState({position});
+                AsyncStorage.setItem('position', position, err => {
+                  console.log('Saved failed.');
+                });
+              }}
               buttonProps = {{
                 title: "获取",
                 onPress: () => {
@@ -97,13 +119,23 @@ export default class Start extends Component {
               label="SSID"
               placeholder="输入门禁系统的SSID"
               value={this.state.ssid}
-              onValueChange={ssid => this.setState({ssid})}
+              onChangeText={ssid => {
+                this.setState({ssid});
+                AsyncStorage.setItem('ssid', ssid, err => {
+                  console.log('Saved failed.');
+                });
+              }}
             />
             <FormItem
               label="密码"
               placeholder="输入门禁系统的密码"
               value={this.state.wifiPwd}
-              onValueChange={wifiPwd => this.setState({wifiPwd})}
+              onChangeText={wifiPwd => {
+                this.setState({wifiPwd});
+                AsyncStorage.setItem('wifiPwd', wifiPwd, err => {
+                  console.log('Saved failed');
+                });
+              }}
             />
             <FormItem
               label="自动关闭时间"
@@ -113,6 +145,16 @@ export default class Start extends Component {
         </ConfigBlock>
       </ScrollView>
     )
+  }
+  componentDidMount() {
+    const fields = ['autoRun', 'autoConnect', 'position', 'ssid', 'wifiPwd', 'autoClose'];
+    fields.forEach(field => {
+      AsyncStorage.getItem(field, (err, res) => {
+        if(res !== null) {
+          this.setState({[field]: (res === 'yes' || res === 'no') ? (res === 'yes' ? true : false) : res});
+        }
+      });
+    })
   }
 };
 
